@@ -1,0 +1,280 @@
+{
+	"info": {
+		"_postman_id": "49696b7d-1fb0-4894-bd94-12e8476aaf25",
+		"name": "Tugas7",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24520753"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "User delayed response",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Check the active environment\", () => {\r",
+									"  pm.expect(pm.environment.name).to.eql(\"staging\");\r",
+									"});\r",
+									"pm.test(\"Content-Type header is present\", () => {\r",
+									"  pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"pm.test(\"Response property matches environment variable\", function () {\r",
+									"  pm.expect(pm.response.json().name).to.eql(pm.environment.get(\"name\"));\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "apikey"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"haechan\",\r\n    \"job\": \"florist\"\r\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/api/users?delay=3",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"api",
+								"users"
+							],
+							"query": [
+								{
+									"key": "delay",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User register success",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Object is contained\", () => {\r",
+									"  pm.expect(pm.response.json()).to.be.a(\"object\");\r",
+									"});\r",
+									"//tergantung waktu yg dibutuhkan setelah send\r",
+									"pm.test(\"Response time is less than 1000ms\", () => {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"pm.test(\"Cookie JSESSIONID is present\", () => {\r",
+									"  pm.expect(pm.cookies.has('JSESSIONID')).to.be.false;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"marklee@nct.kr\",\r\n    \"password\": \"nctdream\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/api/register",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"api",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"pm.test(\"Test data type of the response\", () => {\r",
+									"  pm.expect(jsonData).to.be.an(\"object\");\r",
+									"  pm.expect(jsonData.name).to.be.a(\"string\");\r",
+									"  pm.expect(jsonData.age).to.be.a(\"number\");\r",
+									"});\r",
+									"pm.test(\"Content-Type header is present\", () => {\r",
+									"  pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"pm.test(\"Person is Haechan\", () => {\r",
+									"  const responseJson = pm.response.json();\r",
+									"  pm.expect(responseJson.age).to.eql(25);\r",
+									"  pm.expect(responseJson.job).to.eql(\"florist\")\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"haechan\",\r\n    \"job\": \"florist\",\r\n    \"age\": 25\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/api/users/2",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response time is less than 1000ms\", () => {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"pm.test(\"The job is florist\", () => {\r",
+									"  const jsonData = pm.response.json();\r",
+									"  pm.expect(jsonData.name).to.eql(\"haechan\");\r",
+									"});\r",
+									"pm.test(\"Body containts string\", () => {\r",
+									"    pm.expect(pm.response.text()).to.include(\"job\");\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "apikey"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"haechan\",\r\n    \"job\": \"florist\",\r\n    \"hobby\": \"read\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_url}}/api/users/2?=1",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"2"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", () => {\r",
+									"  pm.response.to.have.status(204);\r",
+									"});\r",
+									"//test not in production, expect to fail\r",
+									"pm.test(\"Check the active environment\", () => {\r",
+									"  pm.expect(pm.environment.name).to.eql(\"production\");\r",
+									"});\r",
+									"pm.test(\"Cookie JSESSIONID is present\", () => {\r",
+									"  pm.expect(pm.cookies.has('JSESSIONID')).to.be.false;\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\": \"sun_flower\",\r\n    \"created\": true,\r\n    \"errors\": []\r\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/api/users/2",
+							"host": [
+								"{{api_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
